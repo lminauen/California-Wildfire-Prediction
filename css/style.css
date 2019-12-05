@@ -1,0 +1,150 @@
+br {
+   display: block;
+   margin: -10px 0;
+}
+
+#wunderground {
+  width: 800px;
+}
+
+#matching {
+  width: 200px;
+}
+
+#empty_val {
+
+}
+
+#procedure_tree {
+  width: 900px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#pie_nn {
+  height: 500px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#bar_nn {
+  height: 480px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#pie_kn {
+  height: 500px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#bar_kn {
+  height: 480px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#pie_lr {
+  height: 500px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#bar_lr_train {
+  height: 480px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#bar_lr_test {
+  height: 480px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#bar_concept {
+  height: 500px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#nn {
+  height: 530px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#phantomjs {
+  height: 530px;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.nobull {
+  list-style-type: none;
+ }
+
+.code {
+   position:absolute;
+   width: 120%;
+   max-width: 100vp;
+   scrollbar-width: none;
+   margin-left: auto;
+   margin-right: auto;
+   left: -11%;
+}
+
+.code2 {
+  top: 5vh;
+  position:absolute;
+  margin-left: auto;
+  margin-right: auto;
+  width: 120%;
+  max-width: 100vp;
+  scrollbar-width: none;
+  left: -11%;
+}
+
+.container {
+    display: flex;
+}
+
+.colLeft {
+    flex: 1;
+    width: 50%;
+    padding-top: 5%;
+}
+
+.colRight {
+    flex: 1;
+    width: 50%;
+    padding-top: 5%;
+}
+
+.colLeft_chart {
+    flex: 1;
+    float: left;
+    width: 50%;
+}
+
+.colRight_chart {
+    flex: 1;
+    float: right;
+    width: 50%;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

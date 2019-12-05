@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+		<!-- Leaflet CSS -->
+		<link rel="stylesheet" href="plugin/leaflet/leaflet.css">
+		<link rel="stylesheet" href="plugin/leaflet/leaflet-reveal.css">
+		<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+
+		<!-- Custom Style -->
+		<link rel="stylesheet" href="css/style.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<!-- FRAME -->
+					<section data-background-image="res/fire2.jpg">
+						<h1>Wildfire Prediction</h1>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+					<h2>Theoretical Concept</h2>
+					<div id="map-test" class="map"></div>
+					</section>
+			  </section>
+
+				<section>
+					<!-- FRAME -->
+					<section data-background-image="res/collecting.jpg">
+					<h1>Data Collecting</h1>
+					</section>
+
+					<!-- FRAME -->
+					<section data-background-image="res/fullscreen_kaggle.png">
+						<span class="fragment fade-in">
+							<pre><code class="R code" data-trim data-line-numbers="4,6,9">
+rm(list = ls(all.names = TRUE))
+library(DBI)
+
+con <- dbConnect(RSQLite::SQLite(), "data/Project/wildfires.sqlite")
+
+res <- dbSendQuery(con, "SELECT * FROM fires WHERE state = 'CA';")
+fires_california <- dbFetch(res)
+
+res <- dbSendQuery(con, "SELECT date(DISCOVERY_DATE) AS DISCOVERY_DATE FROM Fires WHERE state = 'CA';")
+discovery_dates <- dbFetch(res)
+fires_california$DISCOVERY_DATE <- discovery_dates
+
+dbDisconnect(con)
+							</code></pre>
+						<span>
+					</section>
+
+					<!-- FRAME -->
+					<section data-background-image="res/fullscreen_wunderground.png">
+						<div style="position:relative">
+							<span class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0;" data-fragment-index="0">
+								<img id="phantomjs" data-src="res/phantomjs.svg">
+					  	</span>-->
+
+							<span class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0;" data-fragment-index="1">
+								<pre><code class="R code2" data-trim data-line-numbers="2,5-8,10-11,23-33,35,44">
+location <- c("Ontario, CA")
+location_code <- c("KONT")
+locations <- data.frame(location, location_code)
+
+dates_since <- seq(as.Date("2000-01-01"), as.Date("2015-12-01"),
+                   by = "months")
+dates_until <- seq(as.Date("2000-02-01"), as.Date("2016-01-01"),
+                   by = "months") - 1
+
+api_key <- "6532d6454b8aa370768e63d6ba5a832e"
+units <- "m"
+url <- c("https://api.weather.com/v1/location/",
+         ":9:US/observations/historical.json?apiKey=",
+         "&units=",
+         "&startDate=",
+         "&endDate=")
+
+observations <- list()
+numObservations <- 0
+
+for(i in 1:nrow(locations)) {
+	for (d in 1:length(dates_since)) {
+		req_url <- paste(url[1],
+		                 locations$location_code[i],
+		                 url[2],
+		                 apiKey,
+		                 url[3],
+		                 units,
+		                 url[4],
+		                 format(dates_since[d], "%Y%m%d"),
+		                 url[5],
+		                 format(dates_until[d], "%Y%m%d"),
+		                 sep = "")
+
+		res <- jsonlite::fromJSON(req_url)
+
+		num_observations <- num_observations + 1
+		observations[[num_observations]] <- res
+			%>% as.data.frame
+	}
+}
+
+output <- rbind.fill(observations)
+save(output,file="climateWeatherMetric.RData")
+								</code></pre>
+					  	</span>
+						</div>
+					</section>
+				</section>
+
+				<section>
+					<!-- FRAME -->
+					<section data-background-image="res/cleaning.jpg">
+						<h1>Data Cleaning</h1>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<!--h2>From datasets to dataset</h2>-->
+						<ul>
+						  <li>First datasets massive, messy and inconsistent</li>
+						  <li>Deselecting unusable variables</li>
+							<li>Summarising observations</li>
+							<li>Adding custom variables</li>
+							<li>Matching values</li>
+							<li>Merging datasets</li>
+							<li style="color: red;">From 7.9 million to 150'000 values</li>
+						</ul>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<h2>Data View</h2>
+						<div class="container">
+							<div class="colLeft">
+								<img id="empty_val" data-src="res/empty_val.png">
+							</div>
+
+							<div class="colRight">
+								<img id="matching" data-src="res/matching.png">
+							</div>
+
+							<div class="colRight">
+								<img id="SumCalc" data-src="res/SumCalc.PNG">
+							</div>
+						</div>
+					</section>
+			  </section>
+
+				<section>
+					<!-- FRAME -->
+					<section data-background-image="res/model_building.jpeg">
+						<h1>Model Building</h1>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<h2>Concept</h2>
+						<span class="fragment fade-out" style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0;" data-fragment-index="0">
+							<img id="procedure_tree" data-src="res/1ProcedureTree.svg">
+						</span>
+
+						<span class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right: auto; left: 0; right: 0;" data-fragment-index="0">
+							<img id="bar_concept" data-src="res/bar_concept.svg">
+						</span>
+					</section>
+
+					<!-- FRAME
+					<section data-transition="fade-in none-out">
+						<h2>Logistic Regression</h2>
+						<div class="colLeft_chart">
+							<img id="pie_nn" data-src="res/pie_nn.svg">
+						</div>
+
+						<div class="colRight_chart">
+								<img id="procedure_tree" data-src="res/1ProcedureTree.svg">
+						</div>
+					</section> -->
+
+					<!-- FRAME
+					<section data-transition="none-in fade-out">
+						<h2>Logistic Regression</h2>
+						<div class="colLeft_chart">
+							<img id="pie_nn" data-src="res/pie_nn.svg">
+						</div>
+
+						<div class="colRight_chart">
+								<img id="bar_concept" data-src="res/bar_concept.svg">
+						</div>
+					</section> -->
+
+					<!-- FRAME -->
+					<section>
+						<h2>Neural Network - CV</h2>
+						<img id="nn" data-src="res/nn.svg">
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<h2>Neural Network - Results</h2>
+						<div class="colLeft_chart">
+							<img id="pie_nn" data-src="res/pie_nn.svg">
+						</div>
+
+						<div class="colRight_chart">
+							<img id="bar_nn" data-src="res/bar_nn.svg">
+						</div>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<h2>Logistic Regression</h2>
+						<div class="colLeft_chart">
+							<img id="pie_lr" data-src="res/pie_lr.svg">
+						</div>
+
+						<div class="colRight_chart">
+								<img id="bar_lr_test" data-src="res/bar_lr_test.svg">
+						</div>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<h2>k-nearest neighbors</h2>
+						<div class="colLeft_chart">
+							<img id="pie_kn" data-src="res/pie_kn.svg">
+						</div>
+
+						<div class="colRight_chart">
+							<img id="bar_kn" data-src="res/bar_kn.svg">
+						</div>
+					</section>
+			  </section>
+
+				<section>
+					<!-- FRAME -->
+					<section data-background-image="res/conclusion.jpeg">
+						<h1>Conclusion</h1>
+					</section>
+
+					<!-- FRAME -->
+					<section>
+						<ul>
+						  <li>Best performing model: KNN</li>
+						  <li>Still insufficient for real world application</li>
+							<li>Problem: A lot of randomness in wildfires happening</li>
+							<li>Various of approaches to enhance the model
+								<ul>
+						      <small><li>More combinations of covariates</li></small><br>
+						      <small><li>Introducing regularization to models</li></small><br>
+									<small><li>Focus on false negative rate</li></small><br>
+									<small><li>Alteration of critical probability</li></small>
+    						</ul>
+							</li>
+							<li>But still: Machine learning shows potential in wildfire forecasting</li>
+						</ul>
+					</section>
+				</section>
+
+				<!-- FRAME -->
+				<section data-background-image="res/earth.jpg">
+					<h1>Questions ?</h1>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+		<script src="plugin/leaflet/leaflet.js"></script>
+		<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+		<script src="js/leaflet_config.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				controls: false,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true },
+					{ src: 'plugin/reveald3/reveald3.js' }
+				]
+			});
+		</script>
+	</body>
+</html>
