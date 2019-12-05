@@ -8,4 +8,4 @@ The following people contributed to the project:
 - Yehudah Gol
 - [Robin Scherrer](https://www.linkedin.com/in/robin-scherrer)
 
-The presentation can be viewed here: https://rjscherrer.github.io/predicting-wildfires-presentation
+The presentation can be viewed here: https://lminauen.github.io/California-Wildfire-Prediction
